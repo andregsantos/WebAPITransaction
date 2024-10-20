@@ -1,0 +1,6 @@
+@WebAPITransaction_HostAddress = http://localhost:5241
+
+GET {{WebAPITransaction_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
