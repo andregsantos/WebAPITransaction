@@ -5,8 +5,15 @@ namespace WebAPITransaction.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class TransactionController(IUnitOfWork _unitOfWork) : BaseController
+    public class TransactionController(IUnitOfWork _unitOfWork) : ControllerBase
     {
+         Guid GetTransactionId()
+        {
+            if (!Guid.TryParse(Request.Headers["TransactionId"].ToString(), out var transactionId))
+                throw new ArgumentException("TransactionId not found.");
+
+            return transactionId;
+        }
 
         [HttpPost("BeginTransaction")]
         public async Task BeginTransaction() =>  await _unitOfWork.BeginTransactionAsync(GetTransactionId());

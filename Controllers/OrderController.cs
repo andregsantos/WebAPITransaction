@@ -8,8 +8,16 @@ namespace WebAPITransaction.Controllers
 
     [ApiController]
     [Route("[controller]")]
-    public class OrderController(IUnitOfWork _unitOfWork) : BaseController
+    public class OrderController(IUnitOfWork _unitOfWork) : ControllerBase
     {
+        Guid GetTransactionId()
+        {
+            if (!Guid.TryParse(Request.Headers["TransactionId"].ToString(), out var transactionId))
+                throw new ArgumentException("TransactionId not found.");
+
+            return transactionId;
+        }
+
         [HttpPost("InsertOrderHeader")]
         public async Task<ActionResult<int>> InsertOrderHeaderAsync()
         {
@@ -62,7 +70,7 @@ namespace WebAPITransaction.Controllers
             }
         }
 
-        public async Task<int> ExecuteScalarAsync(string query,
+        async Task<int> ExecuteScalarAsync(string query,
             SqlParameter[]? parameters = null)
         {
 
