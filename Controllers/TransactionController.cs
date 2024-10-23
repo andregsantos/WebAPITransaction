@@ -1,23 +1,20 @@
-using Azure.Core;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Data.SqlClient;
-using System.Data;
+using WebAPITransaction.Transaction;
 
 namespace WebAPITransaction.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class TransactionController(IUnitOfWork _unitOfWork) : ControllerBase
+    public class TransactionController(IUnitOfWork _unitOfWork) : BaseController
     {
-        private Guid GetTransactionId() => new Guid(Request.Headers["x-transactionid"].ToString());
 
         [HttpPost("BeginTransaction")]
-        public void BeginTransaction() => _unitOfWork.BeginTransaction(GetTransactionId());
+        public async Task BeginTransaction() =>  await _unitOfWork.BeginTransactionAsync(GetTransactionId());
 
         [HttpPost("CommitTransaction")]
-        public void CommitTransaction() => _unitOfWork.CommitTransaction(GetTransactionId());
+        public async Task CommitTransaction() => await _unitOfWork.CommitTransactionAsync(GetTransactionId());
 
         [HttpPost("RollbackTransaction")]
-        public void RollbackTransaction() => _unitOfWork.RollbackTransaction(GetTransactionId());
+        public async Task RollbackTransaction() => await _unitOfWork.RollbackTransactionAsync(GetTransactionId());
     }
 }

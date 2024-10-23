@@ -1,7 +1,5 @@
 using Microsoft.Data.SqlClient;
-using System.Data;
-using System.Data.Common;
-using WebAPITransaction;
+using WebAPITransaction.Transaction;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,12 +10,12 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-var connection  = new SqlConnection(@"Data Source=localhost\SQLEXPRESS;Initial Catalog=TransactionDb;Integrated Security=True;Encrypt=False");
 
-connection.Open();
+builder.Services.AddSingleton<IConnectionFactory, ConnectionFactory>(
+    c => new ConnectionFactory(new SqlConnection())
+);
 
-builder.Services.AddSingleton<IUnitOfWork, UnitOfWork>(x=>
-    new UnitOfWork(connection));
+builder.Services.AddSingleton<IUnitOfWork, UnitOfWork>();
 
 var app = builder.Build();
 
